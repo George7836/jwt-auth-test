@@ -1,12 +1,13 @@
 require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const mongoose = require("mongoose");
-const router = require("./router/router");
+import express from "express";
+import cors from "cors";
+import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
+import router from "./router/router";
+import ErrorMiddleware from "./middlewares/error.middleware";
+
 const PORT = process.env.PORT || 5000;
 const app = express();
-const errorMiddleware = require("./middlewares/error.middleware");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -17,11 +18,11 @@ app.use(
   })
 );
 app.use("/api", router);
-app.use(errorMiddleware);
+app.use(ErrorMiddleware);
 
 const start = async () => {
   try {
-    await mongoose.connect(process.env.DB_URL);
+    await mongoose.connect(process.env.DB_URL || "");
     app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));
   } catch (e) {
     console.log(e);
